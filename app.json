@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "ノリレク",
+    "slug": "norirec",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F97316"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.norirec.app",
+      "usesAppleSignIn": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F97316"
+      },
+      "package": "com.norirec.app",
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite"
+    ],
+    "extra": {
+      "firebaseApiKey": "YOUR_FIREBASE_API_KEY",
+      "firebaseAuthDomain": "YOUR_FIREBASE_AUTH_DOMAIN",
+      "firebaseProjectId": "YOUR_FIREBASE_PROJECT_ID",
+      "firebaseStorageBucket": "YOUR_FIREBASE_STORAGE_BUCKET",
+      "firebaseMessagingSenderId": "YOUR_FIREBASE_MESSAGING_SENDER_ID",
+      "firebaseAppId": "YOUR_FIREBASE_APP_ID"
+    }
+  }
+}
