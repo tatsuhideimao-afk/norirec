@@ -11,4 +11,3 @@ web-build/
 *.orig.*
 .env
 google-services.json
-GoogleService-Info.plist
