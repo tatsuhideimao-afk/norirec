@@ -3,9 +3,11 @@
     "name": "ノリレク",
     "slug": "norirec",
     "version": "1.0.0",
+    "sdkVersion": "54.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -14,7 +16,6 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.norirec.app",
-      "usesAppleSignIn": false,
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -28,7 +29,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-"extra": {
+    "extra": {
       "firebaseApiKey": "AIzaSyCNghQHiC35uIcSLzyM-JPiU6ysFeEbvo0"
     }
   }
