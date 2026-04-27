@@ -28,10 +28,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-sqlite"
-    ],
-    "extra": {
+"extra": {
       "firebaseApiKey": "AIzaSyCNghQHiC35uIcSLzyM-JPiU6ysFeEbvo0"
     }
   }
