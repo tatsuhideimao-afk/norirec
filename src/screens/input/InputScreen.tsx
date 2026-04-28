@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  TextInput, Alert, Platform,
+  TextInput, Alert, Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { COLORS } from '../../constants/colors';
 import { OrangeButton } from '../../components/common/OrangeButton';
 import { Card } from '../../components/common/Card';
@@ -26,6 +25,113 @@ const initialForm: InputFormData = {
   invest: '',
   machineName: '',
 };
+
+// --- Custom Date Picker (no external native deps) ---
+const YEARS = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i);
+const MONTHS = Array.from({ length: 12 }, (_, i) => i + 1);
+const daysInMonth = (y: number, m: number) => new Date(y, m, 0).getDate();
+
+const DatePickerModal: React.FC<{
+  visible: boolean;
+  value: Date;
+  onChange: (d: Date) => void;
+  onClose: () => void;
+}> = ({ visible, value, onChange, onClose }) => {
+  const [y, setY] = useState(value.getFullYear());
+  const [m, setM] = useState(value.getMonth() + 1);
+  const [d, setD] = useState(value.getDate());
+
+  const days = Array.from({ length: daysInMonth(y, m) }, (_, i) => i + 1);
+  const clampedDay = Math.min(d, daysInMonth(y, m));
+
+  const confirm = () => {
+    onChange(new Date(y, m - 1, clampedDay));
+    onClose();
+  };
+
+  const Col: React.FC<{
+    items: number[];
+    selected: number;
+    onSelect: (v: number) => void;
+    label: string;
+  }> = ({ items, selected, onSelect, label }) => (
+    <View style={dpStyles.col}>
+      <Text style={dpStyles.colLabel}>{label}</Text>
+      <ScrollView style={dpStyles.scroll} showsVerticalScrollIndicator={false}>
+        {items.map((v) => (
+          <TouchableOpacity
+            key={v}
+            style={[dpStyles.item, v === selected && dpStyles.itemSelected]}
+            onPress={() => onSelect(v)}
+          >
+            <Text style={[dpStyles.itemText, v === selected && dpStyles.itemTextSelected]}>
+              {String(v).padStart(2, '0')}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </View>
+  );
+
+  return (
+    <Modal visible={visible} transparent animationType="slide">
+      <TouchableOpacity style={dpStyles.overlay} activeOpacity={1} onPress={onClose} />
+      <View style={dpStyles.sheet}>
+        <View style={dpStyles.header}>
+          <TouchableOpacity onPress={onClose}>
+            <Text style={dpStyles.cancel}>キャンセル</Text>
+          </TouchableOpacity>
+          <Text style={dpStyles.title}>日付を選択</Text>
+          <TouchableOpacity onPress={confirm}>
+            <Text style={dpStyles.done}>完了</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={dpStyles.cols}>
+          <Col items={YEARS} selected={y} onSelect={setY} label="年" />
+          <Col items={MONTHS} selected={m} onSelect={setM} label="月" />
+          <Col items={days} selected={clampedDay} onSelect={setD} label="日" />
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const dpStyles = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' },
+  sheet: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingBottom: 32,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderBottomWidth: 0.5,
+    borderBottomColor: COLORS.border,
+  },
+  title: { fontSize: 15, fontWeight: '600', color: COLORS.text },
+  cancel: { fontSize: 15, color: COLORS.textSecondary },
+  done: { fontSize: 15, fontWeight: '700', color: COLORS.primary },
+  cols: { flexDirection: 'row', padding: 8 },
+  col: { flex: 1, alignItems: 'center' },
+  colLabel: { fontSize: 12, color: COLORS.textSecondary, marginBottom: 4 },
+  scroll: { height: 200 },
+  item: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginVertical: 2,
+    alignItems: 'center',
+  },
+  itemSelected: { backgroundColor: COLORS.primary },
+  itemText: { fontSize: 16, color: COLORS.text },
+  itemTextSelected: { color: COLORS.white, fontWeight: '700' },
+});
+// --- End DatePickerModal ---
 
 const StepIndicator: React.FC<{ step: number }> = ({ step }) => (
   <View style={styles.stepRow}>
@@ -228,14 +334,12 @@ export const InputScreen: React.FC = () => {
       <TouchableOpacity style={styles.textInput} onPress={() => setShowDate(true)}>
         <Text style={{ fontSize: 16, color: COLORS.text }}>{formatDate(form.date)}</Text>
       </TouchableOpacity>
-      {showDate && (
-        <DateTimePicker
-          value={form.date}
-          mode="date"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={(_, d) => { setShowDate(false); if (d) update({ date: d }); }}
-        />
-      )}
+      <DatePickerModal
+        visible={showDate}
+        value={form.date}
+        onChange={(d) => update({ date: d })}
+        onClose={() => setShowDate(false)}
+      />
 
       {form.sport !== 'パチンコスロット' && (
         <>
